@@ -9,7 +9,7 @@ function getTaskStatusClass(task) {
     if (dueDate < serverDate) {
         return 'overdue';
     } else {
-        return '';
+        return 'completed-low';
     }
 }
 
