@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <title>Lista de Tareas</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.css" />
+    <script src="https://code.jquery.com/jquery-1.11.1.min.js"></script>
+    <script src="https://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.11/index.global.min.js" integrity="sha256-i4vDW9EgtaJmeauDDymtNF2omPZ1fCKpf4w1gBlU1IE=" crossorigin="anonymous"></script>
+</head>
+<style>
+    .task-card {
+        border-radius: 3px;
+        margin-bottom: 8px;
+        padding: 5px;
+    }
+
+    .task-card h2 {
+        color: #333;
+        font-weight: bold;
+        margin-bottom: 5px;
+    }
+
+    .task-card p {
+        color: #666;
+        margin-bottom: 3px;
+    }
+
+    .task-card .status {
+        font-weight: bold;
+    }
+
+    .task-card .priority {
+        font-weight: bold;
+    }
+
+    .task-card.pending-low {
+        background-color: #f7dc6f;
+        /* Color para tarea pendiente de baja prioridad */
+    }
+
+    .task-card.pending-medium {
+        background-color: #f5b041;
+        /* Color para tarea pendiente de prioridad media */
+    }
+
+    .task-card.pending-high {
+        background-color: #f39c12;
+        /* Color para tarea pendiente de alta prioridad */
+    }
+
+    .task-card.completed-low {
+        background-color: #a9dfbf;
+        /* Color para tarea completada de baja prioridad */
+    }
+
+    .task-card.completed-medium {
+        background-color: #48c9b0;
+        /* Color para tarea completada de prioridad media */
+    }
+
+    .task-card.completed-high {
+        background-color: #16a085;
+        /* Color para tarea completada de alta prioridad */
+    }
+
+    .task-card.overdue {
+        background-color: #ffcccc;
+        border: 1px solid red;
+    }
+
+    [data-role="footer"] {
+        position: fixed;
+        bottom: 0;
+        width: 100%;
+    }
+
+    [data-role="footer"] ul {
+        display: flex;
+        justify-content: space-around;
+        list-style-type: none;
+        padding: 0;
+    }
+
+    [data-role="footer"] li {
+        flex-grow: 1;
+        text-align: center;
+    }
+
+    .task-card {
+        margin-bottom: 20px;
+    }
+</style>
+
+<body>
+
+    <div data-role="page" id="home" data-theme="b">
+
+        <div data-role="header">
+            <h1>Lista de Tareas</h1>
+        </div>
+
+        <div data-role="content">
+            <% tasks.forEach(function(task) { %>
+                <div class="task-card <%= getTaskStatusClass(task) %>" data-role="collapsible">
+                    <h2>
+                        <%= task.title %>
+                    </h2>
+                    <p>
+                        <%= task.description %>
+                    </p>
+                    <p>Estado: <span class="status">
+                            <%= task.status %>
+                        </span></p>
+                    <p>Prioridad: <span class="priority">
+                            <%= task.priority %>
+                        </span></p>
+                    <p>Fecha de vencimiento: <%= task.dueDate ? task.dueDate.toLocaleString('en-US', { month: 'short' ,
+                            day: 'numeric' , year: 'numeric' }) : 'N/A' %>
+                    </p>
+
+                    <a href="/<%= task.id_task %>" data-role="button" data-inline="true">Editar</a>
+                    <button onclick="showConfirmation('<%= task.id_task %>')" data-role="button"
+                        data-inline="true">Eliminar</button>
+                </div>
+                <div style="margin-bottom: 20px;"></div>
+                <% }); %>
+                    <div style="text-align: center;">
+                        <a href="#add-task" data-role="button" data-inline="true"
+                            class="ui-btn ui-btn-b ui-corner-all ui-shadow ui-btn-inline ui-btn-icon-left"
+                            style="font-size: 20px;">Agregar Tarea</a>
+                    </div>
+
+
+
+
+                    <div data-role="content">
+                        <div id='calendar'></div>
+                    </div>
+                    <script>
+
+                        document.addEventListener('DOMContentLoaded', function() {
+                          const calendarEl = document.getElementById('calendar')
+                          const calendar = new FullCalendar.Calendar(calendarEl, {
+                            initialView: 'dayGridMonth'
+                          })
+                          calendar.render()
+                        })
+                  
+                      </script>
+                    
+                    
+
+
+
+
+
+                
+
+        </div>
+
+
+
+        <div data-role="popup" id="confirmation-popup" data-dismissible="false" data-theme="a">
+            <div data-role="header" data-theme="b">
+                <h1>Confirmación de eliminación</h1>
+            </div>
+            <div role="main" class="ui-content">
+                <p>¿Estás seguro de que deseas eliminar esta tarea?</p>
+                <a href="#" class="ui-btn ui-btn-b ui-corner-all" onclick="deleteConfirmed()">Sí</a>
+                <a href="#" class="ui-btn ui-corner-all" data-rel="back">Cancelar</a>
+            </div>
+        </div>
+
+        <script>
+            var taskIdToDelete;
+
+            function showConfirmation(taskId) {
+                taskIdToDelete = taskId;
+                $("#confirmation-popup").popup("open");
+            }
+
+            function deleteConfirmed() {
+                fetch(`/${taskIdToDelete}`, {
+                    method: 'DELETE'
+                })
+                    .then(response => {
+                        if (response.ok) {
+                            window.location.reload();
+                        } else {
+                        }
+                    })
+                    .catch(error => console.error("Error al eliminar la tarea:", error));
+
+                $("#confirmation-popup").popup("close");
+            }
+
+
+        </script>
+
+
+
+        <div data-role="footer" class="nav-glyphish-example" data-theme="b">
+            <div data-role="navbar" class="nav-glyphish-example" data-grid="d">
+                <ul>
+                    <li><a href="https://github.com/LOctavioDev?tab=repositories" >GitHub</a></li>
+                    <li><a href="#" >Email</a></li>
+                    <li><a href="https://www.codewars.com/users/LOctavioDev" >CodeWars</a></li>
+                </ul>
+            </div>
+        </div>
+
+
+    </div>
+
+
+
+
+    <div data-role="page" id="add-task" data-theme="b">
+
+        <div data-role="header">
+            <h1>Nueva Tarea</h1>
+        </div>
+
+        <div data-role="content">
+            <form id="add-task-form" action="/" method="POST" onsubmit="return validateDueDate()">
+                <div data-role="fieldcontain">
+                    <label for="title">ID tarea:</label>
+                    <input type="text" name="id_task" id="id_task" value="">
+                </div>
+        
+                <div data-role="fieldcontain">
+                    <label for="title">Título:</label>
+                    <input type="text" name="title" id="title">
+                </div>
+                <div data-role="fieldcontain">
+                    <label for="description">Descripción:</label>
+                    <textarea name="description" id="description"></textarea>
+                </div>
+                <div data-role="fieldcontain">
+                    <label for="priority">Prioridad:</label>
+                    <select name="priority" id="priority">
+                        <option value="low">Baja</option>
+                        <option value="medium" selected>Media</option>
+                        <option value="high">Alta</option>
+                    </select>
+                </div>
+                <div data-role="fieldcontain">
+                    <label for="dueDate">Fecha de vencimiento:</label>
+                    <input type="date" name="dueDate" id="dueDate" required>
+                </div>
+                <button type="submit" data-inline="true">Agregar</button>
+                <a href="/" class="ui-btn ui-btn-inline">Cancelar</a>
+            </form>
+        </div>
+        
+        <!-- Alerta modal para la fecha de vencimiento -->
+        <div data-role="popup" id="dueDatePopup" data-overlay-theme="b" data-theme="b" data-dismissible="false" style="max-width:400px;">
+            <div role="banner" class="ui-header ui-bar-b">
+                <h1 class="ui-title" role="heading" aria-level="1">¡Error!</h1>
+            </div>
+            <div role="main" class="ui-content">
+                <h3>La fecha de vencimiento no puede ser anterior a la fecha de hoy.</h3>
+                <a href="#" class="ui-btn ui-corner-all ui-shadow ui-btn-inline ui-btn-b" data-rel="back">Aceptar</a>
+            </div>
+        </div>
+        
+        <script>
+            function validateDueDate() {
+                const dueDateInput = document.getElementById('dueDate');
+                const today = new Date();
+                const selectedDate = new Date(dueDateInput.value);
+        
+                if (selectedDate < today) {
+                    $('#dueDatePopup').popup('open');
+                    return false; // Evita que se envíe el formulario
+                } else {
+                    return true; // Permite enviar el formulario
+                }
+            }
+        </script>
+        
+
+
+
+    </div>
+
+
+
+</body>
+
+</html>
