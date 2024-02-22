@@ -135,6 +135,14 @@
                             style="font-size: 20px;">Agregar Tarea</a>
                     </div>
 
+
+                    <div style="text-align: center;">
+                        <a href="#galery" data-role="button" data-inline="true"
+                            class="ui-btn ui-btn-b ui-corner-all ui-shadow ui-btn-inline ui-btn-icon-left"
+                            style="font-size: 20px;">Ver Galeria</a>
+                    </div>
+                    
+
                     <div data-role="content">
                         <div id='calendar'></div>
                     </div>
@@ -185,10 +193,7 @@
 
                 $("#confirmation-popup").popup("close");
             }
-
-
         </script>
-
 
 
         <div data-role="footer" class="nav-glyphish-example" data-theme="b">
@@ -200,8 +205,6 @@
                 </ul>
             </div>
         </div>
-
-
     </div>
 
 
@@ -271,6 +274,46 @@
             }
         </script>
     </div>
+
+
+    <div data-role="page" id="galery" data-theme="b">
+
+        <div data-role="header">
+            <h1>Galeria de Tareas</h1>
+        </div>
+
+    
+        <div data-role="content">
+            <div class="ui-grid-b">
+                <% tasks.forEach(function(task, index) { %>
+                    <div class="ui-block-<%= index % 3 + 1 %>">
+                        <div class="ui-bar ui-bar-a"> 
+                            <h3><%= task.title %></h3>
+                        </div>
+                        <div class="ui-body <%= getTaskStatusClass(task) %>"> 
+                            <p><%= task.description %></p>
+                            <p>Estado: <span class="status"><%= task.status %></span></p>
+                            <p>Prioridad: <span class="priority"><%= task.priority %></span></p>
+                            <p>Fecha de vencimiento: <%= task.dueDate ? task.dueDate.toLocaleString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) : 'N/A' %></p>
+                            <!-- <a href="/<%= task.id_task %>" data-role="button" data-inline="true">Editar</a>
+                            <button onclick="showConfirmation('<%= task.id_task %>')" data-role="button" data-inline="true">Eliminar</button> -->
+                        </div>
+                    </div>
+                <% }); %>
+            </div>
+
+
+            <div style="text-align: center;">
+                <a href="/" data-role="button" data-inline="true" class="ui-btn ui-btn-b ui-corner-all ui-shadow ui-btn-inline ui-btn-icon-left" style="font-size: 20px;">Volver al inicio</a>
+            </div>
+
+            
+        </div>
+        
+        
+    
+    </div>
+    
 
 
 
