@@ -7,7 +7,7 @@
     <link rel="stylesheet" href="https://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.css" />
     <script src="https://code.jquery.com/jquery-1.11.1.min.js"></script>
     <script src="https://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.js"></script>
-    <title>Document</title>
+    <title>Editar</title>
 </head>
 
 <body>
@@ -16,16 +16,15 @@
         <div data-role="header">
             <h1>Actualizar Tarea</h1>
         </div>
-
+    
         <div data-role="content" data-theme="b">
-            <form id="edit-task-form" action="/<%=task.id_task%>" method="PUT"> 
+            <form id="edit-task-form" action="/<%=task.id_task%>" method="POST">
                 <input type="hidden" name="_method" value="PUT">
                 <div data-role="fieldcontain">
                     <label for="title">Identificador de la tarea:</label>
                     <input type="text" name="id_task" id="id_task" value="<%= task.id_task %>" readonly>
                 </div>
-            
-
+    
                 <div data-role="fieldcontain">
                     <label for="title">Título:</label>
                     <input type="text" name="title" id="title" value="<%= task.title %>">
@@ -54,43 +53,13 @@
                     <input type="date" name="dueDate" id="dueDate"
                         value="<%= task.dueDate ? task.dueDate.toISOString().split('T')[0] : '' %>">
                 </div>
-                <button type="submit" data-inline="true" onclick="submitForm()">Guardar</button>
+                <button type="button" data-inline="true" onclick="validateAndSubmit()">Guardar</button>
                 <a href="/" class="ui-btn ui-btn-inline">Cancelar</a>
             </form>
-
-            <div data-role="popup" id="dueDatePopup" data-overlay-theme="b" data-theme="b" data-dismissible="false" style="max-width:400px;">
-                <div role="banner" class="ui-header ui-bar-b">
-                    <h1 class="ui-title" role="heading" aria-level="1">¡Error!</h1>
-                </div>
-                <div role="main" class="ui-content">
-                    <h3>La fecha de vencimiento no puede ser anterior a la fecha de hoy.</h3>
-                    <a href="#" class="ui-btn ui-corner-all ui-shadow ui-btn-inline ui-btn-b" data-rel="back">Aceptar</a>
-                </div>
-            </div>
-
-            <script>
-                function submitForm() {
-                    document.getElementById('edit-task-form').submit();
-                    window.location.href = "/";
-                }
-
-                function validateDueDate() {
-                const dueDateInput = document.getElementById('dueDate');
-                const today = new Date();
-                const selectedDate = new Date(dueDateInput.value);
-        
-                if (selectedDate < today) {
-                    $('#dueDatePopup').popup('open');
-                    return false; // Evita que se envíe el formulario
-                } else {
-                    return true; // Permite enviar el formulario
-                }
-            }
-            </script>
         </div>
-
-        <!-- Alerta modal para la fecha de vencimiento -->
-        <div data-role="popup" id="dueDatePopup" data-overlay-theme="b" data-theme="b" data-dismissible="false" style="max-width:400px;">
+    
+        <div data-role="popup" id="dueDatePopup" data-overlay-theme="b" data-theme="b" data-dismissible="false"
+            style="max-width:400px;">
             <div role="banner" class="ui-header ui-bar-b">
                 <h1 class="ui-title" role="heading" aria-level="1">¡Error!</h1>
             </div>
@@ -99,24 +68,22 @@
                 <a href="#" class="ui-btn ui-corner-all ui-shadow ui-btn-inline ui-btn-b" data-rel="back">Aceptar</a>
             </div>
         </div>
-        
+    
         <script>
-            function validateDueDate() {
+            function validateAndSubmit() {
                 const dueDateInput = document.getElementById('dueDate');
                 const today = new Date();
                 const selectedDate = new Date(dueDateInput.value);
-        
+    
                 if (selectedDate < today) {
                     $('#dueDatePopup').popup('open');
-                    return false; // Evita que se envíe el formulario
                 } else {
-                    return true; // Permite enviar el formulario
+                    document.getElementById('edit-task-form').submit();
                 }
             }
         </script>
-
-        
     </div>
+    
 
     
     

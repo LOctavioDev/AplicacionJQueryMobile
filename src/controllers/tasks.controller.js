@@ -17,7 +17,7 @@ export const getAllTasks = (req, res) => {
   taskDao
     .getAll()
     .then((tasks) => {
-      res.render("../src/views/index.ejs", { tasks, getTaskStatusClass }); 
+      res.render("../src/views/index.ejs", { tasks, getTaskStatusClass });
     })
     .catch((err) => {
       res.json(err);
@@ -36,7 +36,7 @@ export const getOneTask = (req, res) => {
         const taskDueDate = new Date(task.dueDate);
         
         if (taskDueDate < today) {
-          res.render("../src/views/edit.ejs", { task }); 
+          res.render("../src/views/edit.ejs", { task });
 
         } else {
           res.render("../src/views/edit.ejs", { task }); 
@@ -77,9 +77,9 @@ export const updateTask = (req, res) => {
     .updateTask(req.params.id_task, req.body) 
     .then((result) => {
       if (result) {
-        
+        res.redirect("/");
       } else {
-        res.status(404).send("Task not found"); // Manejar el caso en que la tarea no se encuentre
+        res.status(404).send("Task not found"); 
       }
     })
     .catch((err) => {
@@ -89,6 +89,7 @@ export const updateTask = (req, res) => {
       });
     });
 };
+
   
 
 export const deleteTask = (req, res) => {
